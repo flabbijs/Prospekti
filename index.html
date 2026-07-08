@@ -1,0 +1,1633 @@
+<!doctype html>
+<html lang="lv">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PROSPEKTI — Biļete Uz Vienu Galu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050505;
+    --ink:#f4f1ea;
+    --dim:#8a8680;
+    --line:#1a1a1a;
+    --rail:#2a2a2a;
+    --ticket:#e8e2d4;
+    --accent:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Space Grotesk",sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+  /* ====== AXE CURSOR ====== */
+  html, body, section, div, p, h1, h2, h3, h4, h5, h6, span, img, svg {
+    cursor: url("assets/cursor-axe.png") 26 4, auto;
+  }
+  a, button, [role="button"], input, textarea, select, label {
+    cursor: url("assets/cursor-axe-pointer.png") 28 4, pointer;
+  }
+  body{
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,.03), transparent 50%),
+      radial-gradient(circle at 80% 90%, rgba(255,255,255,.02), transparent 50%);
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:#fff;color:#000}
+
+  /* film grain */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>");
+    opacity:.08;mix-blend-mode:overlay;
+  }
+
+  /* TOP UTILITY BAR */
+  .util{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 24px;
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--dim);
+    background:linear-gradient(180deg,rgba(5,5,5,.95),rgba(5,5,5,.7) 70%,transparent);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  .util .brand{display:flex;align-items:center;gap:10px;color:var(--ink)}
+  .util .brand img{height:18px;width:auto;display:block}
+  .util nav{display:flex;gap:22px}
+  .util nav a{position:relative;padding:2px 0}
+  .util nav a:hover{color:var(--ink)}
+  .util .right{display:flex;gap:22px;align-items:center}
+  .util .live{display:inline-flex;align-items:center;gap:8px;color:var(--ink)}
+  .util .live::before{content:"";width:8px;height:8px;border-radius:50%;background:#e83a2d;box-shadow:0 0 12px #e83a2d;animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* HERO */
+  .hero{
+    min-height:100vh;
+    padding:120px 6vw 40px;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    position:relative;
+  }
+  .ticker{
+    position:absolute;top:54px;left:0;right:0;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    background:#0a0a0a;
+    overflow:hidden;
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--dim);
+    padding:8px 0;
+  }
+  .ticker-track{display:flex;gap:48px;white-space:nowrap;animation:scroll 60s linear infinite;width:max-content}
+  .ticker-track span{display:inline-flex;align-items:center;gap:48px}
+  .ticker-track span::after{content:"◆";color:var(--ink)}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+
+  .hero-head{
+    display:flex;flex-direction:column;align-items:center;gap:18px;
+    padding-top:60px;
+  }
+  .hero-img{width:clamp(200px, 28vw, 420px);height:auto;display:block}
+  .meta{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center;
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+  }
+  .meta.train-meta{margin-top:28px;text-align:center;display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+  .meta b{color:var(--ink);font-weight:500}
+  .meta .sep{color:var(--line)}
+  .hero-est{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.45em;color:var(--dim);text-transform:uppercase;
+    border-top:1px solid var(--line);width:min(420px,70%);text-align:center;padding-top:14px;
+  }
+  .logo-block{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+  .logo-block img{width:96px;height:96px;display:block}
+  .logo-block .cap{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;
+  }
+  .title{
+    font-family:"Archivo Black",sans-serif;
+    font-size:clamp(64px,12vw,200px);
+    line-height:.82;letter-spacing:-.03em;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+  .title span.small{display:block;font-size:.18em;letter-spacing:.3em;color:var(--dim);font-family:"JetBrains Mono",monospace;font-weight:400;margin-top:18px}
+
+  /* TRAIN NAVIGATION */
+  .train-wrap{
+    margin-top:40px;
+    position:relative;
+    padding:30px 0 10px;
+  }
+  .train-label{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;
+    display:flex;justify-content:center;align-items:center;gap:16px;margin-bottom:14px;padding:0 4px;
+  }
+  .train-label .dash{width:60px;height:1px;background:var(--line)}
+  .train-box{
+    position:relative;width:100%;max-width:1100px;margin:0 auto;
+    padding:20px 0 0;
+  }
+  .train-box img.train{
+    width:100%;display:block;position:relative;z-index:2;
+    /* tiny halo + contrast lift so edges don't disappear into pure black */
+    filter:
+      drop-shadow(0 0 0.5px rgba(255,255,255,.25))
+      drop-shadow(0 4px 10px rgba(0,0,0,.9))
+      contrast(1.05) saturate(1.02);
+  }
+  .train-box svg.hit{position:absolute;left:0;right:0;top:20px;bottom:0;width:100%;height:calc(100% - 20px);z-index:3}
+  .train-box svg.hit rect{fill:transparent;cursor:pointer}
+  .train-box .tooltip{
+    position:absolute;pointer-events:none;
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    background:#fff;color:#000;padding:5px 9px;
+    transform:translate(-50%,-130%);opacity:0;transition:opacity .15s;
+    white-space:nowrap;z-index:4;
+  }
+  .train-box .tooltip.show{opacity:1}
+  /* rails — positioned OVER the bottom of the train image so wheels sit on them */
+  .rails{
+    position:absolute;left:2%;right:2%;
+    bottom:4px;          /* sits right under the wheels of the cut-out */
+    height:14px;z-index:1;pointer-events:none;
+  }
+  .rails::before{
+    /* sleepers (ties) */
+    content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(90deg, rgba(200,180,150,.28) 0 3px, transparent 3px 22px);
+    top:6px;height:4px;
+    filter:blur(.3px);
+  }
+  .rails::after{
+    /* two parallel steel rails */
+    content:"";position:absolute;left:0;right:0;top:4px;height:8px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.2) 40%, transparent 60%) top/100% 1.5px no-repeat,
+      linear-gradient(180deg, transparent 60%, rgba(255,255,255,.55) 60%, rgba(255,255,255,.2) 90%, transparent) bottom/100% 1.5px no-repeat;
+  }
+  /* wheel shadow that grounds the train on the rail */
+  .ground-shadow{
+    position:absolute;left:4%;right:4%;bottom:2px;height:10px;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse at center, rgba(0,0,0,.9), rgba(0,0,0,.5) 50%, transparent 75%);
+    filter:blur(2px);
+  }
+  .tracks{display:none}
+
+  .scroll-hint{
+    text-align:center;margin-top:40px;
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.4em;color:var(--dim);text-transform:uppercase;
+  }
+  .scroll-hint::after{content:" ↓";display:inline-block;animation:bob 2s infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+  /* SECTIONS (route stops) */
+  section.stop{
+    min-height:100vh;padding:120px 6vw 100px;
+    border-top:1px solid var(--line);
+    position:relative;
+    scroll-margin-top:60px;
+  }
+  .stop-head{
+    display:grid;grid-template-columns:auto 1fr auto;gap:30px;align-items:end;
+    padding-bottom:30px;border-bottom:1px solid var(--line);margin-bottom:40px;
+  }
+  .stop-num{
+    font-family:"Archivo Black",sans-serif;font-size:100px;line-height:.85;color:var(--ink);
+  }
+  .stop-num small{display:block;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--dim);font-weight:400;margin-bottom:8px}
+  .stop-title{
+    font-family:"Archivo Black",sans-serif;font-size:clamp(48px,8vw,120px);line-height:.85;letter-spacing:-.02em;text-transform:uppercase;
+  }
+  .stop-code{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;text-align:right;line-height:1.8;
+  }
+  .stop-code b{color:var(--ink);font-weight:500}
+
+  /* 01 PROSPEKTI — intro */
+  .about-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:60px}
+  .about-grid p{font-size:20px;line-height:1.55;color:var(--ink);max-width:52ch}
+  .about-grid p + p{margin-top:24px;color:var(--dim);font-size:17px}
+  .about-grid .side{
+    border:1px solid var(--line);padding:24px;font-family:"JetBrains Mono",monospace;font-size:12px;line-height:1.9;color:var(--dim);
+    height:fit-content;
+  }
+  .about-grid .side dt{color:var(--dim);text-transform:uppercase;letter-spacing:.2em;font-size:10px;margin-top:14px}
+  .about-grid .side dt:first-child{margin-top:0}
+  .about-grid .side dd{color:var(--ink);font-size:14px;margin-bottom:4px}
+
+  /* 02 SHOP */
+  .shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .buy-btn{display:block;text-align:center;background:var(--ink);color:#000;padding:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;text-decoration:none}
+  .product .img > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+  .product{border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:14px;transition:border-color .2s, transform .2s}
+  .product:hover{border-color:var(--ink);transform:translateY(-4px)}
+  .product .img{
+    aspect-ratio:4/5;background:#0e0e0e;position:relative;overflow:hidden;
+    background-image:repeating-linear-gradient(45deg,#111 0 12px,#0a0a0a 12px 24px);
+  }
+  .product .img::after{
+    content:attr(data-label);position:absolute;inset:auto 12px 12px;
+    font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;
+  }
+  .product h4{font-family:"JetBrains Mono",monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+  .product .row{display:flex;justify-content:space-between;align-items:center;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--dim)}
+  .product .price{color:var(--ink);font-weight:500}
+  .product button{
+    background:var(--ink);color:#000;border:0;padding:12px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;
+  }
+  .product button:hover{background:#fff}
+
+  /* 03 BUVG — vertical rail map */
+  .buvg-wrap{
+    display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:start;
+  }
+  .buvg-map{
+    position:relative;
+    width:220px;min-width:220px;
+  }
+  .map-sub{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--dim);
+    text-transform:uppercase;margin-bottom:18px;
+  }
+  .rail-track{
+    position:relative;
+    height:360px;
+    padding:0;
+  }
+  /* Endpoint labels */
+  .rail-end{
+    position:absolute;left:0;right:0;display:flex;align-items:center;gap:12px;
+    pointer-events:none;z-index:3;
+  }
+  .rail-end.top{top:0}
+  .rail-end.bot{bottom:0}
+  .rail-end .e-dot{
+    width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #000;box-shadow:0 0 0 2px #fff;
+    flex-shrink:0;margin-left:78px;
+  }
+  .rail-end.top .e-dot{background:#ffd166;box-shadow:0 0 0 2px #ffd166}
+  .rail-end .e-info{padding-left:4px}
+  .rail-end .e-name{
+    font-family:"Archivo Black",sans-serif;font-size:14px;letter-spacing:.02em;color:#fff;
+    text-transform:uppercase;line-height:1;
+  }
+  .rail-end .e-sub{
+    font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.3em;color:var(--dim);
+    text-transform:uppercase;margin-top:3px;
+  }
+
+  /* the two rails + ties */
+  .rail-line{
+    position:absolute;left:78px;top:24px;bottom:24px;width:24px;
+  }
+  .rail-line::before,.rail-line::after{
+    content:"";position:absolute;top:0;bottom:0;width:2px;background:#3a3a3a;border-radius:2px;
+  }
+  .rail-line::before{left:4px}
+  .rail-line::after{right:4px}
+  .rail-ties{
+    position:absolute;left:74px;top:24px;bottom:24px;width:32px;
+    background-image:repeating-linear-gradient(180deg, #2a1a0e 0 2px, transparent 2px 14px);
+    opacity:.7;
+  }
+
+  /* The moving train icon */
+  .rail-train{
+    position:absolute;left:90px;transform:translate(-50%,-50%);
+    width:60px;height:60px;
+    transition:top .45s cubic-bezier(.5,.1,.3,1);
+    z-index:5;pointer-events:none;
+    filter:drop-shadow(0 6px 8px rgba(0,0,0,.75));
+  }
+  .rail-train svg,.rail-train img{width:100%;height:100%;display:block;object-fit:contain}
+  .rail-train.chugging{animation:chug .4s 2}
+  @keyframes chug{0%,100%{transform:translate(-50%,-50%) rotate(0)}50%{transform:translate(-50%,-50%) rotate(-2deg)}}
+
+  /* Controls */
+  .rail-controls{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin-top:18px;padding:10px 14px;border:1px solid var(--line);
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--dim);
+  }
+  .rail-btn{
+    width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+    background:transparent;border:1px solid var(--line);color:var(--ink);
+    transition:all .15s;
+  }
+  .rail-btn:hover{background:var(--ink);color:#000;border-color:var(--ink)}
+  .rail-btn:disabled{opacity:.25;cursor:not-allowed}
+  .rail-btn svg{width:14px;height:14px;fill:currentColor}
+  .rail-count{flex:1;text-align:center;color:var(--ink);font-weight:700;letter-spacing:.18em;font-size:10px}
+
+  /* Detail panel — center column, text only */
+  .buvg-detail{
+    border:1px solid var(--line);padding:28px 30px 24px;
+    background:rgba(255,255,255,.02);
+    display:flex;flex-direction:column;gap:14px;
+    min-height:300px;
+  }
+  .buvg-detail .td-body{display:contents}
+  .buvg-detail .td-meta{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--dim);
+    text-transform:uppercase;
+  }
+  .buvg-detail h3{
+    font-family:"Archivo Black",sans-serif;font-size:36px;line-height:.95;letter-spacing:-.01em;
+    text-transform:uppercase;
+  }
+  .buvg-detail .td-station{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.25em;color:var(--ink);
+    text-transform:uppercase;
+  }
+  .buvg-detail .td-station::before{
+    content:"";width:8px;height:8px;border-radius:50%;background:#ff4d5e;
+  }
+  .buvg-detail .td-feat{
+    font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.06em;color:var(--ink);
+    line-height:1.65;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .buvg-detail .td-embed{margin-top:2px}
+  .buvg-detail .td-embed iframe{display:block;width:100%;height:80px;border:0;border-radius:12px;color-scheme:light}
+  .buvg-detail .td-links{margin-top:auto;padding-top:12px}
+
+
+
+  @media (max-width:900px){
+    .buvg-wrap{grid-template-columns:1fr;gap:28px}
+    .buvg-map{width:100%;min-width:0}
+    .buvg-detail{min-height:auto}
+  }
+  .cover{
+    aspect-ratio:1;background:#000;border:1px solid var(--line);
+    position:relative;display:grid;place-items:center;overflow:hidden;
+  }
+  .cover::before{
+    content:"";position:absolute;inset:0;
+    background:
+      repeating-linear-gradient(0deg,transparent 0 22px,rgba(255,255,255,.04) 22px 24px),
+      radial-gradient(ellipse at 30% 30%,rgba(255,255,255,.06),transparent 60%);
+  }
+  .cover .c-content{position:relative;text-align:center;padding:24px}
+  .cover .c-content img{width:160px;height:160px;margin:0 auto 24px;display:block}
+  .cover .c-content .t{font-family:"Archivo Black",sans-serif;font-size:44px;line-height:.9;text-transform:uppercase;letter-spacing:-.02em}
+  .cover .c-content .s{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;color:var(--dim);margin-top:14px;text-transform:uppercase}
+  .cover-photo{padding:0}
+  .cover-photo::before{display:none}
+  .cover-photo .cover-art{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
+  .tracklist{border-top:1px solid var(--line)}
+  .tracklist-split{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
+  .side-label{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--dim);
+    padding:14px 4px 10px;border-bottom:1px solid var(--line);
+  }
+  @media (max-width:900px){
+    .tracklist-split{grid-template-columns:1fr;gap:0}
+  }
+  .track{
+    display:grid;grid-template-columns:40px 1fr auto auto;gap:20px;align-items:center;
+    padding:16px 4px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;
+  }
+  .track:hover{background:#0a0a0a}
+  .track .n{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--dim)}
+  .track .name{font-size:17px;letter-spacing:-.01em}
+  .track .feat{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+  .track .time{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--dim)}
+  .track.playing{background:#fff;color:#000}
+  .track.playing .n,.track.playing .feat,.track.playing .time{color:#000}
+  .stream-row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+  .stream-row a{
+    border:1px solid var(--line);padding:10px 16px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+    transition:all .15s;
+  }
+  .stream-row a:hover{border-color:var(--ink);color:var(--ink)}
+
+  /* 04 CREW */
+  .crew-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--line)}
+  .member{background:var(--bg);padding:22px;min-height:280px;display:flex;flex-direction:column;justify-content:space-between;transition:background .2s;color:inherit;text-decoration:none}
+  .member:hover{background:#0c0c0c}
+  .member .portrait{
+    aspect-ratio:1;background:
+      repeating-linear-gradient(135deg,#141414 0 10px,#0a0a0a 10px 20px);
+    border:1px solid #1a1a1a;margin-bottom:16px;position:relative;overflow:hidden;
+  }
+  .member .portrait > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;z-index:1}
+  .member .portrait::after{
+    content:attr(data-role);position:absolute;bottom:8px;left:8px;z-index:2;
+    background:rgba(0,0,0,.65);padding:2px 6px;
+    font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;
+  }
+  .member h4{font-family:"Archivo Black",sans-serif;font-size:22px;line-height:.9;text-transform:uppercase;letter-spacing:-.01em;word-break:break-word}
+  .member .role{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--dim);letter-spacing:.15em;text-transform:uppercase;margin-top:6px;line-height:1.5}
+  .member .ig{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--dim);letter-spacing:.1em;margin-top:14px;padding-top:10px;border-top:1px solid var(--line);transition:color .15s}
+  .member:hover .ig{color:var(--ink)}
+
+  /* 05 HQ — news/journal */
+  .hq-grid{display:grid;grid-template-columns:2fr 1fr;gap:60px}
+  .news-item{padding:26px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:120px 1fr auto;gap:24px;align-items:baseline;cursor:pointer}
+  .news-item:first-child{padding-top:0}
+  .news-item:hover h4{text-decoration:underline}
+  .news-item .date{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--dim);letter-spacing:.15em;text-transform:uppercase}
+  .news-item h4{font-size:22px;line-height:1.2;letter-spacing:-.01em}
+  .news-item h4 em{font-style:normal;color:var(--dim);font-weight:400}
+  .news-item .tag{font-family:"JetBrains Mono",monospace;font-size:10px;color:#000;background:var(--ink);padding:3px 8px;letter-spacing:.2em;text-transform:uppercase}
+  .signup{border:1px solid var(--line);padding:28px;height:fit-content}
+  .signup h5{font-family:"Archivo Black",sans-serif;font-size:28px;text-transform:uppercase;letter-spacing:-.01em;margin-bottom:10px}
+  .signup p{color:var(--dim);font-size:14px;line-height:1.5;margin-bottom:20px}
+  .signup form{display:flex}
+  .signup input{flex:1;background:transparent;border:1px solid var(--line);color:var(--ink);padding:12px;font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.1em}
+  .signup input:focus{outline:none;border-color:var(--ink)}
+  .signup button{background:var(--ink);color:#000;border:0;padding:12px 18px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer}
+
+  /* 06 KONCERTI */
+  .shows-head{display:grid;grid-template-columns:80px 1fr 1fr 1fr 160px;gap:20px;padding:14px 4px;border-bottom:1px solid var(--ink);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase}
+  .show{
+    display:grid;grid-template-columns:80px 1fr 1fr 1fr 160px;gap:20px;padding:22px 4px;border-bottom:1px solid var(--line);align-items:center;transition:background .15s;
+  }
+  .show:hover{background:#0a0a0a}
+  .show.sold{opacity:.5}
+  .show .d-day{font-family:"Archivo Black",sans-serif;font-size:40px;line-height:.9}
+  .show .d-mo{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase}
+  .show .city{font-size:22px;letter-spacing:-.01em}
+  .show .venue{color:var(--dim);font-size:14px;margin-top:4px;font-family:"JetBrains Mono",monospace;letter-spacing:.08em}
+  .show .country{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--dim);letter-spacing:.2em;text-transform:uppercase}
+  .show .status{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+  .show .cta{
+    display:block;text-align:center;padding:12px;background:var(--ink);color:#000;
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+  }
+  .show .cta.past{background:transparent;border:1px solid var(--line);color:var(--dim);cursor:default}
+
+  /* AWARD HIGHLIGHT */
+  .award{
+    display:grid;grid-template-columns:360px 1fr;gap:0;
+    border:1px solid var(--line);background:var(--bg);
+    margin:40px 0 60px;overflow:hidden;
+  }
+  .award-img{
+    background:
+      radial-gradient(circle at 50% 45%, rgba(212,175,55,.18), transparent 65%),
+      repeating-linear-gradient(0deg,transparent 0 23px,rgba(255,255,255,.03) 23px 24px),
+      #0c0c0c;
+    display:flex;align-items:center;justify-content:center;padding:30px;
+    border-right:1px solid var(--line);
+  }
+  .award-img img{
+    width:100%;max-width:220px;height:auto;display:block;
+    filter:drop-shadow(0 20px 40px rgba(212,175,55,.25));
+  }
+  .award-img.award-photo{
+    background:#000;padding:0;position:relative;overflow:hidden;
+    min-height:360px;
+  }
+  .award-img.award-photo img{
+    width:100%;height:100%;max-width:none;
+    object-fit:cover;object-position:center top;
+    position:absolute;inset:0;filter:none;
+  }
+  .award-credit{
+    position:absolute;left:14px;bottom:12px;z-index:2;
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+    color:rgba(255,255,255,.65);
+    background:rgba(0,0,0,.5);padding:6px 10px;
+    border:1px solid rgba(255,255,255,.15);
+  }
+  .award-copy{padding:36px 40px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+  .award-tag{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+    color:#d4af37;
+  }
+  .award-copy h3{
+    font-family:"Archivo Black",sans-serif;
+    font-size:clamp(28px,3.4vw,44px);line-height:.95;
+    text-transform:uppercase;letter-spacing:-.02em;
+    margin:0;
+  }
+  .award-copy p{font-size:15px;line-height:1.55;color:var(--dim);margin:0;max-width:56ch}
+  .award-copy p.award-thanks{color:var(--ink);font-size:13px;margin-top:4px}
+  .award-links{display:flex;gap:10px;margin-top:6px}
+  .award-links a{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    letter-spacing:.25em;text-transform:uppercase;
+    color:var(--ink);text-decoration:none;
+    border:1px solid var(--line);padding:10px 16px;
+    transition:background .15s,color .15s;
+  }
+  .award-links a:hover{background:var(--ink);color:#000}
+
+  /* BLEED PHOTO */
+  .bleed{
+    margin:50px auto 0;position:relative;
+    max-width:1000px;
+    border:1px solid var(--line);
+    background:#000;
+  }
+  .bleed img{display:block;width:100%;height:auto;filter:contrast(1.05)}
+  .bleed figcaption{
+    position:absolute;left:0;right:0;bottom:0;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 24px;
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+    color:rgba(255,255,255,.7);
+    background:linear-gradient(to top,rgba(0,0,0,.85),transparent);
+  }
+  .bleed.bleed-tight{margin-bottom:40px;max-height:none;overflow:visible}
+  .bleed.bleed-tight img{object-fit:contain;max-height:none;width:100%;height:auto}
+  @media (max-width:900px){
+    .bleed{margin-left:0;margin-right:0}
+  }
+
+  /* SECTION SUBHEAD */
+  .sub-h{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;letter-spacing:.4em;text-transform:uppercase;
+    color:var(--dim);
+    margin:40px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line);
+  }
+  .sub-h.press-h{margin-top:60px}
+
+  /* PRESS GRID */
+  .press-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line);border:1px solid var(--line)}
+  .press{
+    background:var(--bg);padding:22px;
+    display:flex;flex-direction:column;gap:10px;
+    color:inherit;text-decoration:none;
+    min-height:170px;
+    transition:background .15s;
+  }
+  .press:hover{background:#0f0f0f}
+  .press-src{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);
+  }
+  .press h4{
+    font-family:"Archivo Black",sans-serif;
+    font-size:20px;line-height:1;text-transform:uppercase;
+    letter-spacing:-.01em;margin:0;
+  }
+  .press p{font-size:13px;line-height:1.4;color:var(--dim);margin:0;flex:1}
+  .press-go{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;letter-spacing:.25em;color:var(--ink);
+    padding-top:10px;border-top:1px solid var(--line);
+  }
+
+  @media (max-width:900px){
+    .award{grid-template-columns:1fr}
+    .award-img{border-right:none;border-bottom:1px solid var(--line)}
+    .award-img img{max-width:160px}
+    .award-copy{padding:28px 22px}
+    .press-grid{grid-template-columns:1fr}
+  }
+  .show.sold .cta{background:transparent;border:1px solid var(--line);color:var(--dim)}
+
+  /* FOOTER */
+  footer{
+    border-top:1px solid var(--line);padding:80px 6vw 40px;margin-top:80px;
+    display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:40px;
+  }
+  footer .col h6{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;margin-bottom:16px}
+  footer .col a{display:block;padding:6px 0;font-size:14px;color:var(--ink)}
+  footer .col a:hover{color:var(--dim)}
+  footer .big{
+    grid-column:1/-1;font-family:"Archivo Black",sans-serif;font-size:clamp(60px,16vw,180px);line-height:.85;letter-spacing:-.04em;text-transform:uppercase;
+    margin-top:60px;border-top:1px solid var(--line);padding-top:40px;
+    text-align:center;
+  }
+  .foot-meta{
+    grid-column:1/-1;display:flex;justify-content:space-between;padding-top:24px;border-top:1px solid var(--line);margin-top:24px;
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;
+  }
+
+  /* PANEL (wagon content overlay) — not used currently, sections are inline */
+
+  /* ======== RESPONSIVE — TABLET ======== */
+  @media (max-width:1100px){
+    .crew-grid{grid-template-columns:repeat(3,1fr)}
+    .press-grid{grid-template-columns:repeat(2,1fr)}
+    .buvg-wrap{grid-template-columns:200px 1fr;gap:30px}
+    .hq-grid{grid-template-columns:1.4fr 1fr}
+  }
+
+  /* ======== RESPONSIVE — SMALL TABLET ======== */
+  @media (max-width:900px){
+    .hero-head{gap:24px}
+    .about-grid,.album,.hq-grid{grid-template-columns:1fr;gap:30px}
+    .shop-grid{grid-template-columns:1fr 1fr}
+    .crew-grid{grid-template-columns:1fr 1fr}
+    .shows-head{display:none}
+    .show{grid-template-columns:60px 1fr;gap:14px;row-gap:6px}
+    .show .country,.show .status{display:none}
+    .show .cta{grid-column:1/-1}
+    footer{grid-template-columns:1fr 1fr}
+  }
+
+  /* ======== RESPONSIVE — MOBILE ======== */
+  @media (max-width:700px){
+    .util{padding:10px 14px;gap:10px}
+    .util .brand img{height:14px}
+    .util nav{
+      gap:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+      scrollbar-width:none;max-width:60vw;
+    }
+    .util nav::-webkit-scrollbar{display:none}
+    .util nav a{white-space:nowrap;font-size:10px}
+    .util .right{display:none}
+
+    .hero{padding:90px 5vw 30px}
+    .ticker{top:42px;padding:6px 0}
+    .hero-head{padding-top:36px}
+    .hero-img{width:min(70vw,300px)}
+    .hero-est{letter-spacing:.3em;font-size:10px}
+    .train-label{gap:8px;font-size:9px;letter-spacing:.18em;flex-wrap:wrap}
+    .train-label .dash{width:24px}
+    .meta{font-size:10px;gap:10px;letter-spacing:.16em}
+    .scroll-hint{margin-top:26px;font-size:9px;letter-spacing:.28em}
+
+    section.stop{min-height:auto;padding:70px 5vw 56px}
+    .stop-head{grid-template-columns:1fr;gap:12px;align-items:start;padding-bottom:20px;margin-bottom:28px}
+    .stop-num{font-size:52px}
+    .stop-num small{margin-bottom:4px}
+    .stop-title{font-size:clamp(38px,13vw,72px)}
+    .stop-code{text-align:left;font-size:10px}
+
+    .about-grid p{font-size:16px}
+    .about-grid p + p{font-size:14px}
+
+    .shop-grid{grid-template-columns:1fr;gap:16px}
+
+    .buvg-wrap{grid-template-columns:1fr;gap:24px}
+    .buvg-map{margin:0 auto}
+    .buvg-detail{min-height:auto;padding:22px 20px 18px}
+    .buvg-detail h3{font-size:28px}
+
+    .crew-grid{grid-template-columns:1fr 1fr}
+    .member{padding:14px;min-height:auto}
+    .member h4{font-size:16px}
+    .member .role{font-size:9px}
+    .member .ig{font-size:9px;margin-top:10px}
+
+    .news-item{grid-template-columns:1fr;gap:6px;padding:18px 0}
+    .news-item h4{font-size:17px}
+    .news-item .tag{justify-self:start}
+
+    .award-copy h3{font-size:24px}
+    .award-copy p{font-size:14px}
+    .press-grid{grid-template-columns:1fr}
+    .press{min-height:auto;padding:18px}
+    .press h4{font-size:17px}
+
+    .show .d-day{font-size:28px}
+    .show .city{font-size:17px}
+    .show .venue{font-size:12px}
+
+    .range{height:420px}
+    .game-ui{left:4%;top:16px;gap:10px}
+    .game-ui h3{font-size:22px}
+    .score-grid{min-width:170px;padding:10px 12px;gap:6px 12px}
+    .score-grid .val{font-size:16px}
+    .score-grid .val.small{font-size:12px}
+    #game-msg{font-size:18px;min-height:22px}
+    .legend{font-size:8px}
+    .target-wrap{width:140px;height:140px;right:3%}
+    .wind-hud{bottom:14px;font-size:9px}
+    .flying-axe{width:80px}
+
+    footer{grid-template-columns:1fr;padding:56px 5vw 30px;gap:28px}
+    footer .big{font-size:clamp(40px,17vw,110px);margin-top:36px;padding-top:28px}
+    .foot-meta{flex-direction:column;gap:8px;align-items:flex-start}
+  }
+  /* ========= AXE GAME ========= */
+  #game{position:relative}
+  .range{
+    position:relative;
+    width:100%;
+    height:560px;
+    margin-top:10px;
+    background:
+      radial-gradient(ellipse at 50% 100%, rgba(255,255,255,.04), transparent 60%),
+      linear-gradient(180deg, #1a1410 0%, #0c0907 60%, #070503 100%);
+    border:1px solid var(--line);
+    overflow:hidden;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  .range::before{
+    /* wood plank texture behind target */
+    content:"";position:absolute;inset:0;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,0) 46px, rgba(255,255,255,.04) 46px, rgba(255,255,255,.04) 47px),
+      repeating-linear-gradient(0deg, rgba(0,0,0,0) 0, rgba(0,0,0,0) 80px, rgba(255,255,255,.03) 80px, rgba(255,255,255,.03) 81px);
+    pointer-events:none;
+  }
+  .range::after{
+    /* vignette */
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at 60% 50%, transparent 40%, rgba(0,0,0,.65) 100%);
+  }
+  .range-floor{
+    position:absolute;left:0;right:0;bottom:0;height:90px;
+    background:linear-gradient(180deg, transparent, rgba(0,0,0,.6));
+    border-top:1px dashed var(--line);
+    pointer-events:none;
+  }
+  .range-tape{
+    position:absolute;left:4vw;bottom:24px;
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.35em;color:var(--dim);text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  /* bullseye target — oval photo with scoring rings */
+  .target-wrap{
+    position:absolute;right:6%;top:50%;transform:translateY(-50%);
+    width:240px;height:240px;
+    pointer-events:none;
+    filter:drop-shadow(0 20px 40px rgba(0,0,0,.7));
+    transition:transform .12s;
+  }
+  #target{
+    position:relative;width:100%;height:100%;
+    border-radius:50%;
+    overflow:hidden;
+    background:#1a0a0a url("assets/target-photo.png") center/cover no-repeat;
+    border:3px solid #2a1810;
+    box-shadow:0 0 0 4px #1a0f08, 0 0 0 5px #000;
+  }
+  #target .rings{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  #target::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 40% 35%, rgba(255,255,255,.14), transparent 55%);
+    pointer-events:none;
+  }
+  .target-label{
+    position:absolute;left:50%;top:-40px;transform:translateX(-50%);
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.35em;color:var(--dim);text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .target-wrap.hit{animation:targetShake .3s ease-out}
+  @keyframes targetShake{
+    0%,100%{transform:translateY(-50%) translateX(0)}
+    25%{transform:translateY(-52%) translateX(-6px)}
+    50%{transform:translateY(-48%) translateX(6px)}
+    75%{transform:translateY(-51%) translateX(-3px)}
+  }
+  /* wind indicator */
+  .wind-hud{
+    position:absolute;right:6%;bottom:24px;
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;
+    display:flex;align-items:center;gap:10px;
+    pointer-events:none;
+  }
+  .wind-arrow{
+    display:inline-block;width:40px;height:2px;background:var(--dim);position:relative;
+    transition:transform .4s ease;
+  }
+  .wind-arrow::after{
+    content:"";position:absolute;right:-1px;top:-4px;
+    border-left:8px solid var(--dim);border-top:5px solid transparent;border-bottom:5px solid transparent;
+  }
+  /* throw timer */
+  .timer-bar{
+    position:absolute;left:4%;right:4%;top:16px;height:3px;background:rgba(255,255,255,.08);z-index:4;
+    pointer-events:none;
+  }
+  .timer-fill{height:100%;background:var(--ink);width:0%;transition:width .05s linear}
+  .timer-fill.warn{background:#ff4d5e}
+
+  /* game UI panel */
+  .game-ui{
+    position:absolute;left:4%;top:32px;z-index:5;
+    display:flex;flex-direction:column;gap:14px;
+    font-family:"JetBrains Mono",monospace;
+    pointer-events:auto;
+  }
+  .game-ui h3{
+    font-family:"Archivo Black",sans-serif;font-size:34px;letter-spacing:-.02em;line-height:.9;
+    color:var(--ink);margin-bottom:4px;
+  }
+  .game-ui .sub{font-size:10px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase}
+  .score-grid{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:8px 18px;
+    padding:14px 18px;border:1px solid var(--line);background:rgba(0,0,0,.55);
+    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    min-width:220px;
+  }
+  .score-grid .label{font-size:9px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase}
+  .score-grid .val{font-family:"Archivo Black",sans-serif;font-size:22px;letter-spacing:.05em;color:var(--ink);line-height:1}
+  .score-grid .val.small{font-size:14px}
+  #game-msg{
+    font-family:"Archivo Black",sans-serif;font-size:28px;letter-spacing:-.01em;
+    min-height:32px;line-height:1;
+  }
+  #game-msg.pulse{animation:msgPulse .5s ease-out}
+  @keyframes msgPulse{0%{transform:scale(1.2);opacity:0}100%{transform:scale(1);opacity:1}}
+  #game-reset{
+    align-self:flex-start;
+    background:transparent;border:1px solid var(--line);color:var(--dim);
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+    padding:10px 14px;transition:all .15s;
+  }
+  #game-reset:hover{border-color:var(--ink);color:var(--ink)}
+  .legend{font-size:9px;letter-spacing:.25em;color:var(--dim);text-transform:uppercase;line-height:1.8}
+  .legend b{color:var(--ink);font-weight:500;font-family:"Archivo Black",sans-serif;letter-spacing:.05em}
+
+  /* flying axe (PNG) */
+  .flying-axe{
+    position:absolute;width:110px;height:auto;pointer-events:none;z-index:3;
+    transform-origin:center;
+    will-change:transform;
+  }
+  .flying-axe img{width:100%;height:auto;display:block;filter:drop-shadow(0 6px 8px rgba(0,0,0,.55))}
+  .axe-drip{
+    position:absolute;right:12%;top:30%;
+    width:6px;height:10px;background:#b3122a;border-radius:40% 40% 60% 60% / 30% 30% 70% 70%;
+    box-shadow:0 9px 0 -1px #b3122a;
+    opacity:0;
+  }
+  .flying-axe.stuck{transition:transform .12s ease-out}
+  .flying-axe.stuck .axe-drip{opacity:1;animation:dripGrow 1.2s ease-out}
+  @keyframes dripGrow{0%{transform:translateY(-4px) scaleY(.2);opacity:0}40%{opacity:1}100%{transform:translateY(0) scaleY(1);opacity:1}}
+
+  .hit-burst{
+    position:absolute;width:60px;height:60px;border-radius:50%;
+    transform:translate(-50%,-50%);
+    pointer-events:none;z-index:2;
+    animation:burst .5s ease-out forwards;
+  }
+  .hit-burst.in{background:radial-gradient(circle, rgba(255,77,94,.8), transparent 65%)}
+  .hit-burst.out{background:radial-gradient(circle, rgba(200,200,200,.4), transparent 65%)}
+  @keyframes burst{0%{transform:translate(-50%,-50%) scale(.3);opacity:1}100%{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
+
+  @media (max-width:900px){
+    .target-wrap{width:200px;height:200px;right:4%}
+    .range{height:480px}
+    .game-ui{top:20px;left:5%}
+    .game-ui h3{font-size:26px}
+  }
+
+</style>
+</head>
+<body>
+
+<div class="util">
+  <a class="brand" href="#top" aria-label="Prospekti"><img src="assets/header.png" alt="Prospekti"/></a>
+  <nav>
+    <a href="#prospekti">01 / Prospekti</a>
+    <a href="#shop">02 / Shop</a>
+    <a href="#buvg">03 / BUVG</a>
+    <a href="#crew">04 / Crew</a>
+    <a href="#hq">05 / HQ</a>
+    <a href="#koncerti">06 / Koncerti</a>
+  </nav>
+  <div class="right">
+    <span class="live">DM @KJUUMANIS · BOOKING</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>BIĻETE UZ VIENU GALU — DEBIJAS ALBUMS ĀRĀ KOPŠ 25.02.2025</span>
+      <span>ZELTA MIKROFONS 2026 — LABĀKAIS HIPHOPA ALBUMS</span>
+      <span>24 TREKI · 1H 21MIN · TRĪS GADI TAISĪTS</span>
+      <span>ŠĪ BIĻETE IR UZ VIENU GALU — SALASPILS PROSPEKTI</span>
+      <span>DM @KJUUMANIS — BOOKING UN SADARBĪBAS</span>
+      <span>BIĻETE UZ VIENU GALU — DEBIJAS ALBUMS ĀRĀ KOPŠ 25.02.2025</span>
+      <span>ZELTA MIKROFONS 2026 — LABĀKAIS HIPHOPA ALBUMS</span>
+      <span>24 TREKI · 1H 21MIN · TRĪS GADI TAISĪTS</span>
+      <span>ŠĪ BIĻETE IR UZ VIENU GALU — SALASPILS PROSPEKTI</span>
+      <span>DM @KJUUMANIS — BOOKING UN SADARBĪBAS</span>
+    </div>
+  </div>
+
+  <div class="hero-head">
+    <img src="assets/header.png" alt="Prospekti — Mūris" class="hero-img"/>
+    <div class="hero-est">EST · 2011 · PROSPEKTI</div>
+  </div>
+
+  <div class="train-wrap">
+    <div class="train-label">
+      <span>PERONS 02</span><div class="dash"></div><span>IZVĒLIES VAGONU</span><div class="dash"></div><span>ATIET PĒC 5 MINŪTĒM</span>
+    </div>
+    <div class="train-box" id="trainBox">
+      <img class="train" src="assets/train.png" alt="Prospekti train navigation"/>
+      <svg class="hit" viewBox="0 0 2172 148" preserveAspectRatio="none">
+        <!-- wagon hit regions; locomotive + caboose left inert -->
+        <rect data-target="prospekti" x="220"  y="10" width="270" height="130" />
+        <rect data-target="shop"      x="510"  y="10" width="300" height="130" />
+        <rect data-target="buvg"      x="820"  y="10" width="300" height="130" />
+        <rect data-target="crew"      x="1130" y="10" width="300" height="130" />
+        <rect data-target="hq"        x="1440" y="10" width="280" height="130" />
+        <rect data-target="koncerti"  x="1730" y="10" width="280" height="130" />
+      </svg>
+      <div class="tooltip" id="tt"></div>
+      <div class="ground-shadow" aria-hidden="true"></div>
+      <div class="rails" aria-hidden="true"></div>
+    </div>
+    <div class="meta train-meta">
+      <span>DEP · 00:00</span>
+      <span class="sep">—</span>
+      <b>ARR · 21:21</b>
+      <span class="sep">—</span>
+      <b>VAGONI · 6</b>
+    </div>
+  </div>
+
+  <div class="scroll-hint">RITINI LEJUP — VAI UZKLIKŠĶINI VAGONU</div>
+</div>
+
+
+<!-- 01 PROSPEKTI -->
+<section class="stop" id="prospekti">
+  <div class="stop-head">
+    <div class="stop-num"><small>VAGON 01</small>01</div>
+    <h2 class="stop-title">PROSPEKTI</h2>
+    <div class="stop-code">
+      <b>SALASPILS → RĪGA</b><br/>
+      10 DALĪBNIEKI<br/>
+      EST · 2009 / 2019
+    </div>
+  </div>
+  <div class="about-grid">
+    <div>
+      <p>Prospekti ir desmit cilvēku repa apvienība no Salaspils. Kaizers 2004. gadā debitēja ar dziesmu "Šī biļete ir uz vienu galu — Salaspils prospekti." Kas iedvesmoja Grupu un tā sāka rakstīt kopā 2011. gadā, oficiāli sevi par Prospekti nosauca 2019.</p>
+    </div>
+    <dl class="side">
+      <dt>IZCELSME</dt><dd>Salaspils · Latvija</dd>
+      <dt>SĀKUMS</dt><dd>2011 · oficiāli 2019</dd>
+      <dt>SASTĀVS</dt><dd>10 dalībnieki</dd>
+      <dt>DEBIJA</dt><dd>Biļete Uz Vienu Galu · 25.02.2025</dd>
+      <dt>STUDIJA</dt><dd>Prospekti HQ · Salaspils</dd>
+      <dt>BOOKING</dt><dd>DM @kjuumanis</dd>
+    </dl>
+  </div>
+
+  <figure class="bleed">
+    <img src="assets/photo-train-wide.jpg" alt="Prospekti — vilcienā"/>
+    <figcaption>
+      <span>VILCIENS · DZELZCEĻŠ</span>
+      <span>FOTO · EDGARS DRUSTS</span>
+    </figcaption>
+  </figure>
+</section>
+
+<!-- 02 SHOP -->
+<section class="stop" id="shop">
+  <div class="stop-head">
+    <div class="stop-num"><small>VAGON 02</small>02</div>
+    <h2 class="stop-title">SHOP</h2>
+    <div class="stop-code">
+      <b><a href="https://prospekti.bigcartel.com/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">PROSPEKTI.BIGCARTEL.COM ↗</a></b><br/>
+      DRĒBES · MŪZIKA<br/>
+      SHIPPING LV · EU
+    </div>
+  </div>
+  <div class="shop-grid">
+    <div class="product" data-bc="unisex-essential-eco-hoodie">
+      <div class="img" data-label="PHOTO · HOODIE"></div>
+      <h4>PROSPEKTI TEXT PREMIUM HOODIE</h4>
+      <div class="row"><span>PREMIUM · UNISEX</span><span class="price">55 €</span></div>
+      <a class="buy-btn" href="https://prospekti.bigcartel.com/product/unisex-essential-eco-hoodie" target="_blank" rel="noopener">PIRKT ŠEIT ↗</a>
+    </div>
+    <div class="product" data-bc="prospekti-logo-t-shirt">
+      <div class="img" data-label="PHOTO · TEE"></div>
+      <h4>PROSPEKTI LOGO T-SHIRT</h4>
+      <div class="row"><span>LOGO PRINT</span><span class="price">25 €</span></div>
+      <a class="buy-btn" href="https://prospekti.bigcartel.com/product/prospekti-logo-t-shirt" target="_blank" rel="noopener">PIRKT ŠEIT ↗</a>
+    </div>
+    <div class="product" data-bc="prospekti-text-t-shirt">
+      <div class="img" data-label="PHOTO · TEE"></div>
+      <h4>PROSPEKTI TEXT T-SHIRT</h4>
+      <div class="row"><span>TEXT PRINT</span><span class="price">25 €</span></div>
+      <a class="buy-btn" href="https://prospekti.bigcartel.com/product/prospekti-text-t-shirt" target="_blank" rel="noopener">PIRKT ŠEIT ↗</a>
+    </div>
+    <div class="product" data-bc="prospektu-kepons">
+      <div class="img" data-label="PHOTO · KEPONS"></div>
+      <h4>PROSPEKTU KEPONS</h4>
+      <div class="row"><span>EMBROIDERED</span><span class="price">25 €</span></div>
+      <a class="buy-btn" href="https://prospekti.bigcartel.com/product/prospektu-kepons" target="_blank" rel="noopener">PIRKT ŠEIT ↗</a>
+    </div>
+    <div class="product" data-bc="prospektu-binijs">
+      <div class="img" data-label="PHOTO · BINIJS"></div>
+      <h4>PROSPEKTU BINIJS</h4>
+      <div class="row"><span>KNIT</span><span class="price">23 €</span></div>
+      <a class="buy-btn" href="https://prospekti.bigcartel.com/product/prospektu-binijs" target="_blank" rel="noopener">PIRKT ŠEIT ↗</a>
+    </div>
+    <div class="product">
+      <div class="img" data-label=""><img src="assets/buvg-cover.png" alt="Biļete Uz Vienu Galu — album cover"/></div>
+      <h4>BUVG — DIGITAL</h4>
+      <div class="row"><span>SPOTIFY · APPLE · YOUTUBE</span><span class="price">STREAM</span></div>
+      <a class="buy-btn" href="https://open.spotify.com/album/2wD3MM8Xlb7hh215NNVrrq" target="_blank" rel="noopener">KLAUSĪTIES ↗</a>
+    </div>
+  </div>
+</section>
+
+<script>
+/* Pull live product photos + prices from Big Cartel */
+fetch('https://api.bigcartel.com/prospekti/products.json')
+  .then(function(r){ return r.json(); })
+  .then(function(products){
+    products.forEach(function(p){
+      var card = document.querySelector('.product[data-bc="' + p.permalink + '"]');
+      if(!card) return;
+      var imgWrap = card.querySelector('.img');
+      var imgUrl = p.images && p.images[0] && (p.images[0].secure_url || p.images[0].url);
+      if(imgWrap && imgUrl && !imgWrap.querySelector('img')){
+        var img = document.createElement('img');
+        img.src = imgUrl + (imgUrl.indexOf('?') > -1 ? '&' : '?') + 'auto=format&fit=max&w=640';
+        img.alt = p.name;
+        img.loading = 'lazy';
+        imgWrap.appendChild(img);
+        imgWrap.setAttribute('data-label','');
+      }
+      var priceEl = card.querySelector('.price');
+      if(priceEl && typeof p.price === 'number'){
+        priceEl.textContent = p.price.toFixed(p.price % 1 ? 2 : 0).replace('.', ',') + ' €';
+      }
+    });
+  })
+  .catch(function(){ /* offline / blocked — static cards remain */ });
+</script>
+
+<!-- 03 BUVG -->
+<section class="stop" id="buvg">
+  <div class="stop-head">
+    <div class="stop-num"><small>VAGON 03</small>03</div>
+    <h2 class="stop-title">BUVG</h2>
+    <div class="stop-code">
+      <b>BIĻETE UZ VIENU GALU</b><br/>
+      DEBIJAS ALBUMS · 25.02.2025<br/>
+      24 TREKI · ZELTA MIKROFONS 2026
+    </div>
+  </div>
+
+  <div class="buvg-wrap">
+    <!-- Vertical rail map -->
+    <div class="buvg-map" id="buvgMap">
+      <div class="map-sub">MARŠRUTS · 24 PIETURAS · ZIEMEĻI → DIENVIDI</div>
+
+      <div class="rail-track" id="railTrack">
+        <div class="rail-line"></div>
+        <div class="rail-ties"></div>
+
+        <!-- Start -->
+        <div class="rail-end top">
+          <span class="e-dot"></span>
+          <div class="e-info">
+            <div class="e-name">PROSPEKTI HQ</div>
+            <div class="e-sub">SĀKUMS</div>
+          </div>
+        </div>
+
+        <!-- End -->
+        <div class="rail-end bot">
+          <span class="e-dot"></span>
+          <div class="e-info">
+            <div class="e-name">GALA PIETURA</div>
+            <div class="e-sub">POHUJ</div>
+          </div>
+        </div>
+
+        <!-- Train icon — position updated via JS -->
+        <div class="rail-train" id="railTrain">
+          <img src="assets/train-rvr.png" alt="" aria-hidden="true"/>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="rail-controls">
+        <button class="rail-btn" id="railPrev" aria-label="Iepriekšējā pietura">
+          <svg viewBox="0 0 24 24"><path d="M12 4l-8 10h5v6h6v-6h5z"/></svg>
+        </button>
+        <div class="rail-count"><span id="railCount">01 / 24</span> · <span id="railDir">UZ RIETUMIEM</span></div>
+        <button class="rail-btn" id="railNext" aria-label="Nākamā pietura">
+          <svg viewBox="0 0 24 24"><path d="M12 20l8-10h-5V4h-6v6H4z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Detail card (middle) -->
+    <div class="buvg-detail" id="trackDetail">
+      <div class="td-meta">TREKS <span id="td-num">01</span> · BUVG · 2024</div>
+      <h3 id="td-title">BRICKS</h3>
+      <div class="td-station" id="td-station">PROSPEKTI HQ</div>
+      <div class="td-feat" id="td-feat">xantikvariāts · Kjuumanis · Jshawn · og montekarlo</div>
+      <div class="td-embed"><iframe id="td-embed" title="Spotify — treka preview" src="https://open.spotify.com/embed/track/4Gj7sgU5EV2BZPy8rDhIxu?utm_source=generator&theme=0" height="80" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+      <div class="stream-row td-links">
+        <a href="https://open.spotify.com/album/2wD3MM8Xlb7hh215NNVrrq" target="_blank" rel="noopener">Spotify ↗</a>
+        <a href="https://www.youtube.com/@Prospekti" target="_blank" rel="noopener">YouTube ↗</a>
+        <a href="https://www.instagram.com/prospektihh/" target="_blank" rel="noopener">Instagram ↗</a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- 04 CREW -->
+<section class="stop" id="crew">
+  <div class="stop-head">
+    <div class="stop-num"><small>VAGON 04</small>04</div>
+    <h2 class="stop-title">CREW</h2>
+    <div class="stop-code">
+      <b>10 DALĪBNIEKI</b><br/>
+      REPERI · BEATMAKERI<br/>
+      SALASPILS · LATVIJA
+    </div>
+  </div>
+  <figure class="bleed bleed-tight">
+    <img src="assets/photo-cards.jpg" alt="Prospekti — kārtis vilcienā"/>
+    <figcaption>
+      <span>KĀRTIS · VAGONS</span>
+      <span>FOTO · EDGARS DRUSTS</span>
+    </figcaption>
+  </figure>
+  <div class="crew-grid">
+    <a class="member" href="https://www.instagram.com/kjuumanis/" target="_blank" rel="noopener">
+      <div>
+        <div class="portrait" data-role="MC · BOOKING"><img src="assets/crew-kjuumanis.png" alt="Kjuumanis"/></div>
+        <h4>KJUUMANIS</h4>
+        <div class="role">REPERIS · 371 BATTLE VETERĀNS</div>
+      </div>
+      <div class="ig">@kjuumanis ↗</div>
+    </a>
+    <a class="member" href="https://www.instagram.com/xanarsforizzay/" target="_blank" rel="noopener">
+      <div>
+        <div class="portrait" data-role="MC · ENGINEER"><img src="assets/crew-xantikvariats.jpeg" alt="Xantikvariāts"/></div>
+        <h4>XANTIKVARIĀTS</h4>
+        <div class="role">Reperis · Mix/master · Producēšana</div>
+      </div>
+      <div class="ig">@xanarsforizzay ↗</div>
+    </a>
+    <a class="member" href="https://www.instagram.com/kaizerskk/" target="_blank" rel="noopener">
+      <div>
+        <div class="portrait" data-role="MC · BEATMAKER"><img src="assets/crew-kaizers.jpeg" alt="Kaizers"/></div>
+        <h4>KAIZERS</h4>
+        <div class="role">Reperis · Mix/Master · Producēšana</div>
+      </div>
+      <div class="ig">@kaizerskk ↗</div>
+    </a>
+    <a class="member" href="https://www.instagram.com/flabbijs/" target="_blank" rel="noopener">
+      <div>
+        <div class="portrait" data-role="MC · FOUNDER"><img src="assets/crew-flabbijs.jpeg" alt="Flabbijs"/></div>
+        <h4>FLABBIJS</h4>
+        <div class="role">Reperis · Benzīngalva</div>
+      </div>
+      <div class="ig">@flabbijs ↗</div>
+    </a>
+    <a class="member" href="https://www.instagram.com/oudzhijs/" target="_blank" rel="noopener">
+      <div>
+        <div class="portrait" data-role="MC"><img src="assets/crew-montekarlo.png" alt="OG Montekarlo"/></div>
+        <h4>OG MONTEKARLO</h4>
+        <div class="role">Reperis</div>
+      </div>
+      <div class="ig">@oudzhijs ↗</div>
+    </a>
+    <a class="member" href="https://www.instagram.com/edoo00/" target="_blank" rel="noopener">
+      <div>
+        <div class="portrait" data-role="MC · BEATMAKER"><img src="assets/crew-edoo0.png" alt="Edoo0"/></div>
+        <h4>EDOO0</h4>
+        <div class="role">Reperis · Producēšana</div>
+      </div>
+      <div class="ig">@edoo00 ↗</div>
+    </a>
+    <a class="member" href="https://www.instagram.com/klaidella/" target="_blank" rel="noopener">
+      <div>
+        <div class="portrait" data-role="MC · FOUNDER"><img src="assets/crew-klaids.png" alt="Klaids"/></div>
+        <h4>KLAIDS</h4>
+        <div class="role">Reperis</div>
+      </div>
+      <div class="ig">@klaidella ↗</div>
+    </a>
+    <a class="member" href="https://www.instagram.com/esdecs/" target="_blank" rel="noopener">
+      <div>
+        <div class="portrait" data-role="MC"><img src="assets/crew-decs.jpeg" alt="Decs"/></div>
+        <h4>DECS</h4>
+        <div class="role">Reperis</div>
+      </div>
+      <div class="ig">@esdecs ↗</div>
+    </a>
+    <a class="member" href="https://www.instagram.com/jayshawncalisthenics/" target="_blank" rel="noopener">
+      <div>
+        <div class="portrait" data-role="MC"><img src="assets/crew-jshawn.png" alt="Jshawn"/></div>
+        <h4>JSHAWN</h4>
+        <div class="role">Reperis</div>
+      </div>
+      <div class="ig">@jayshawncalisthenics ↗</div>
+    </a>
+    <a class="member" href="https://www.instagram.com/_lagans_/" target="_blank" rel="noopener">
+      <div>
+        <div class="portrait" data-role="MC"><img src="assets/crew-lagans.png" alt="Lagans"/></div>
+        <h4>LAGANS</h4>
+        <div class="role">Reperis</div>
+      </div>
+      <div class="ig">@_lagans_ ↗</div>
+    </a>
+  </div>
+</section>
+
+<!-- 05 HQ -->
+<section class="stop" id="hq">
+  <div class="stop-head">
+    <div class="stop-num"><small>VAGON 05</small>05</div>
+    <h2 class="stop-title">HQ</h2>
+    <div class="stop-code">
+      <b>PROSPEKTI HQ</b><br/>
+      STUDIJA · RĪGA<br/>
+      DM @kjuumanis
+    </div>
+  </div>
+  <div class="hq-grid">
+    <div>
+      <div class="news-item">
+        <div class="date">SERVISS</div>
+        <div>
+          <h4>Audio ierakstīšana · <em>apstrāde, mix un master</em></h4>
+        </div>
+        <div class="tag">REKORDS</div>
+      </div>
+      <div class="news-item">
+        <div class="date">SERVISS</div>
+        <div>
+          <h4>Balss ierakstīšana — <em>reklāmām, video, podkāstiem</em></h4>
+        </div>
+        <div class="tag">BALSS</div>
+      </div>
+      <div class="news-item">
+        <div class="date">SERVISS</div>
+        <div>
+          <h4>Bītu un pamatu producēšana — <em>tavai dziesmai vai video</em></h4>
+        </div>
+        <div class="tag">BEATS</div>
+      </div>
+      <div class="news-item">
+        <div class="date">DRĪZUMĀ</div>
+        <div>
+          <h4>Mēģinājumu telpa — <em>koncertiem gatavojies pirms iziešanas uz skatuves</em></h4>
+        </div>
+        <div class="tag">REPE</div>
+      </div>
+    </div>
+    <div class="signup">
+      <h5>REZERVĒ HQ</h5>
+      <p>Vajag ierakstīt dziesmu, balsi reklāmai vai sataisīt bītu? HQ ir atvērts. Booking caur Kjuumanis.</p>
+      <form onsubmit="event.preventDefault();window.open('https://www.instagram.com/kjuumanis/','_blank')">
+        <input type="text" placeholder="stāsti īsi, ko vajag…" required>
+        <button type="submit">RAKSTĪT →</button>
+      </form>
+      <div style="margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.15em;line-height:1.8">
+        <div>DM · <a href="https://www.instagram.com/kjuumanis/" target="_blank" rel="noopener" style="color:var(--ink)">@kjuumanis ↗</a></div>
+        <div>WEB · <a href="https://prospekti.lv" target="_blank" rel="noopener" style="color:var(--ink)">prospekti.lv</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 KONCERTI -->
+<section class="stop" id="koncerti">
+  <div class="stop-head">
+    <div class="stop-num"><small>VAGON 06</small>06</div>
+    <h2 class="stop-title">KONCERTI</h2>
+    <div class="stop-code">
+      <b>2022 → 2025 ARHĪVS</b><br/>
+      ZELTA MIKROFONS<br/>
+      TBA — SEKO IG
+    </div>
+  </div>
+
+  <!-- ZELTA MIKROFONS AWARD HIGHLIGHT -->
+  <div class="award">
+    <div class="award-img award-photo">
+      <img src="assets/zelta-mikrofons-stage.jpg" alt="Prospekti saņem Zelta Mikrofonu — foto Nauris Veiss"/>
+      <div class="award-credit">FOTO · NAURIS VEISS</div>
+    </div>
+    <div class="award-copy">
+      <div class="award-tag">ZELTA MIKROFONS · 30</div>
+      <h3>LABĀKAIS HIPHOPA MŪZIKAS ALBUMS</h3>
+      <p>Debijas albums <b>"Biļete Uz Vienu Galu"</b> saņēma Zelta Mikrofonu 2026. gada ceremonijā. Latvijas mūzikas nozares atzinība — apliecinājums, ka Salaspils rep apvienība ir ierindojusies pašā žanra virsotnē.</p>
+      <p class="award-thanks">Paldies visiem, kas balsoja un klausījās. <b>MĒS TIKAI SĀKAM.</b></p>
+      <div class="award-links">
+        <a href="https://hiphops.lv/zelta-mikrofons-2026/" target="_blank" rel="noopener">HIPHOPS.LV ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOWS ARCHIVE -->
+  <h3 class="sub-h">KONCERTU ARHĪVS</h3>
+  <div class="shows-head">
+    <div>DATUMS</div>
+    <div>NOTIKUMS · VIETA</div>
+    <div>PILSĒTA</div>
+    <div>STATUSS</div>
+    <div></div>
+  </div>
+
+  <div class="show">
+    <div><div class="d-day">20</div><div class="d-mo">SEP '25</div></div>
+    <div><div class="city">Dzīvā Mūzika · Prospekti</div><div class="venue">LuckyLatvian.com tiešraide · LVBet Fight Club · pilns live sets</div></div>
+    <div class="country">Online · Rīga</div>
+    <div class="status">Nospēlēts</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">05</div><div class="d-mo">JŪL '25</div></div>
+    <div><div class="city">Ogre Fight Night</div><div class="venue">Brīvo cīņu pasākums · Brīvības iela 118B · īpašie viesi</div></div>
+    <div class="country">Ogre</div>
+    <div class="status">Nospēlēts</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">04</div><div class="d-mo">JŪL '25</div></div>
+    <div><div class="city">Straume '25 · HipHop Festivāls</div><div class="venue">Zeitradošais Kvartāls · ar netīrais300, Ods, Edavārdi, Arturs Skutelis</div></div>
+    <div class="country">Līgatne</div>
+    <div class="status">Nospēlēts</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">17</div><div class="d-mo">MAI '25</div></div>
+    <div><div class="city">Repa Minifestivāls · BUVG Prezentācija</div><div class="venue">Angāra Koncertzāle · Tallinas kvartāls · ar Steps, Marko & HOTTE, DJ galaktik, DJ Straume · HIPHOPS.LV</div></div>
+    <div class="country">Rīga</div>
+    <div class="status">Nospēlēts</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">—</div><div class="d-mo">VAS '25</div></div>
+    <div><div class="city">Vasaras Tūre '25</div><div class="venue">Angārs · 371 Clique · KSProfl · Salaspils Kultūra · Straumefest · Summer Sound LV · Krastumacs · Ezīšfests</div></div>
+    <div class="country">Latvija</div>
+    <div class="status">Tūre</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">—</div><div class="d-mo">SEP '24</div></div>
+    <div><div class="city">371 Clique Battle 2vs2</div><div class="venue">Kjuumanis & og montekarlo — runas skatuve · YouTube ieraksts</div></div>
+    <div class="country">Salaspils</div>
+    <div class="status">Battle</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">—</div><div class="d-mo">2023</div></div>
+    <div><div class="city">Straume '23</div><div class="venue">Zeit · HipHop festivāls</div></div>
+    <div class="country">Līgatne</div>
+    <div class="status">Nospēlēts</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">02</div><div class="d-mo">JŪN '23</div></div>
+    <div><div class="city">Reperu Vasara '23 · REPA SPRINTS</div><div class="venue">Wondersala/Andrejsala · ar Wiesulis, Ods & gocha, E.V.</div></div>
+    <div class="country">Rīga</div>
+    <div class="status">Nospēlēts</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">—</div><div class="d-mo">MAI '23</div></div>
+    <div><div class="city">WISE Koncerts</div><div class="venue">Sadarbībā ar @wisegoglobal · foto @ralfsbartnieks</div></div>
+    <div class="country">Latvija</div>
+    <div class="status">Nospēlēts</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">—</div><div class="d-mo">APR '23</div></div>
+    <div><div class="city">Jenoti Koncerts</div><div class="venue">@jenoti_lv · viens no pirmajiem publiski fiksētajiem uzstāšanās brīžiem</div></div>
+    <div class="country">Latvija</div>
+    <div class="status">Nospēlēts</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">18</div><div class="d-mo">JŪN '22</div></div>
+    <div><div class="city">Kaizers "Uz Līnijas" Albuma Prezentācija</div><div class="venue">Angārs · Tallinas kvartāls</div></div>
+    <div class="country">Rīga</div>
+    <div class="status">Nospēlēts</div>
+    <span class="cta past">ARHĪVS</span>
+  </div>
+  <div class="show">
+    <div><div class="d-day">—</div><div class="d-mo">TBA</div></div>
+    <div><div class="city">Jaunie Datumi</div><div class="venue">Sekojiet līdzi Instagram · DM @kjuumanis booking</div></div>
+    <div class="country">—</div>
+    <div class="status">Drīzumā</div>
+    <a class="cta" href="https://www.instagram.com/prospektihh/" target="_blank" rel="noopener">SEKO IG ↗</a>
+  </div>
+
+  <!-- PRESS / MEDIA -->
+  <h3 class="sub-h press-h">PRESE · MEDIJI · PODKĀSTI</h3>
+  <div class="press-grid">
+    <a class="press" href="https://hiphops.lv/zelta-mikrofons-2026/" target="_blank" rel="noopener">
+      <div class="press-src">HIPHOPS.LV</div>
+      <h4>Zelta Mikrofons 2026</h4>
+      <p>BUVG — Labākais HipHopa mūzikas albums</p>
+      <div class="press-go">LASĪT ↗</div>
+    </a>
+    <a class="press" href="https://hiphops.lv/prospekti-bilete-uz-vienu-galu/" target="_blank" rel="noopener">
+      <div class="press-src">HIPHOPS.LV</div>
+      <h4>Prospekti — Biļete Uz Vienu Galu</h4>
+      <p>Albuma apskats un intervija</p>
+      <div class="press-go">LASĪT ↗</div>
+    </a>
+    <a class="press" href="https://sejas.tvnet.lv/8199193/hiphopa-grupa-prospekti-izdod-debijas-albumu-bilete-uz-vienu-galu" target="_blank" rel="noopener">
+      <div class="press-src">TVNET · SEJAS</div>
+      <h4>Debijas albums klajā</h4>
+      <p>HipHopa grupa Prospekti izdod "Biļete Uz Vienu Galu"</p>
+      <div class="press-go">LASĪT ↗</div>
+    </a>
+    <a class="press" href="https://www.delfi.lv/kultura/174/music/120062676/hip-hopa-grupa-prospekti-publice-debijas-albumu-taja-dzirdams-ari-fredis-jeb-andris-freidenfelds" target="_blank" rel="noopener">
+      <div class="press-src">DELFI · KULTŪRA</div>
+      <h4>Fredis albumā</h4>
+      <p>Prospekti publicē debijas albumu — dzirdams arī Andris Freidenfelds</p>
+      <div class="press-go">LASĪT ↗</div>
+    </a>
+    <a class="press" href="https://pieci.lv/lv/lr5/raksts/izstasti-albumu/prospekti-stasta-bilete-uz-vienu-galu.a209797/" target="_blank" rel="noopener">
+      <div class="press-src">PIECI.LV · LR5</div>
+      <h4>Izstāsti Albumu</h4>
+      <p>Prospekti stāsta "Biļete Uz Vienu Galu"</p>
+      <div class="press-go">KLAUSĪTIES ↗</div>
+    </a>
+    <a class="press" href="https://replay.lsm.lv/lv/klausies/ieraksts/lr/209797/prospekti-stasta-bilete-uz-vienu-galu" target="_blank" rel="noopener">
+      <div class="press-src">LSM · REPLAY</div>
+      <h4>Prospekti stāsta</h4>
+      <p>Latvijas Radio — pilnais ieraksts par albumu</p>
+      <div class="press-go">KLAUSĪTIES ↗</div>
+    </a>
+    <a class="press" href="https://tv3.lv/izklaide/muzika/repa-minifestivala-savu-pirmo-albumu-prezentes-apvieniba-prospekti/" target="_blank" rel="noopener">
+      <div class="press-src">TV3 · IZKLAIDE</div>
+      <h4>Repa Minifestivāls</h4>
+      <p>Savu pirmo albumu prezentē apvienība Prospekti</p>
+      <div class="press-go">LASĪT ↗</div>
+    </a>
+    <a class="press" href="https://www.youtube.com/@Prospekti" target="_blank" rel="noopener">
+      <div class="press-src">YOUTUBE · AKPRODMEDIA</div>
+      <h4>Dzīvsudrabs · Andrē</h4>
+      <p>Augusts '25 · Labietis Pagan Brewpub · Kjuumanis, Edoo, Lagans, Oudzhijs</p>
+      <div class="press-go">SKATĪTIES ↗</div>
+    </a>
+    <a class="press" href="https://www.youtube.com/@Prospekti" target="_blank" rel="noopener">
+      <div class="press-src">EHR × HIPHOPS.LV</div>
+      <h4>Bīts un Vārds · 4. sezona</h4>
+      <p>Dec '24 · Kaizera podkāsts · Kjuumanis, Edoo, og montekarlo</p>
+      <div class="press-go">SKATĪTIES ↗</div>
+    </a>
+    <a class="press" href="https://www.instagram.com/prospektihh/" target="_blank" rel="noopener">
+      <div class="press-src">UGUNS CAFE</div>
+      <h4>HOT ONES × Prospekti</h4>
+      <p>Jūn–Jūl '25 · Kjuumanis, Decs, Edoo asāko mērču izaicinājums</p>
+      <div class="press-go">SKATĪTIES ↗</div>
+    </a>
+  </div>
+</section>
+
+<!-- 07 AXE RANGE (game) -->
+<section class="stop" id="game">
+  <div class="stop-head">
+    <div class="stop-num"><small>VAGON 07</small>07</div>
+    <h2 class="stop-title">CIRVIS</h2>
+    <div class="stop-code">
+      <b>MINI · SPĒLE</b><br/>
+      MET CIRVI MĒRĶĪ<br/>
+      BULLSEYE · +10
+    </div>
+  </div>
+
+  <div class="range" id="range">
+    <div class="game-ui">
+      <div>
+        <div class="sub">Prospekti · Axe Range</div>
+        <h3>MET CIRVI.</h3>
+      </div>
+      <div class="score-grid">
+        <div class="label">Raunds</div>
+        <div class="val small" id="game-round">RAUNDS 1</div>
+        <div class="label">Metieni</div>
+        <div class="val small" id="game-throws">0/5</div>
+        <div class="label">Score</div>
+        <div class="val" id="game-score">000</div>
+        <div class="label">Rekords</div>
+        <div class="val" id="game-best">000</div>
+        <div class="label">Pēdējais</div>
+        <div class="val small" id="game-last">—</div>
+      </div>
+      <div id="game-msg">KLIKŠĶINI MĒRĶĪ</div>
+      <div class="legend">
+        <b>+10</b> bullseye &nbsp;·&nbsp; <b>+8</b> red &nbsp;·&nbsp; <b>+5</b> ring<br/>
+        <b>+2</b> malā &nbsp;·&nbsp; <b>0</b> garām
+      </div>
+      <button id="game-reset" type="button">↻ Reset</button>
+    </div>
+
+    <div class="target-wrap" id="targetWrap">
+      <div class="target-label">BIĻETE · UZ · VIENU · GALU</div>
+      <div id="target">
+        <svg class="rings" viewBox="0 0 200 200" preserveAspectRatio="none" aria-hidden="true">
+          <g fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.2">
+            <ellipse cx="100" cy="100" rx="96" ry="96"/>
+            <ellipse cx="100" cy="100" rx="72" ry="72"/>
+            <ellipse cx="100" cy="100" rx="48" ry="48"/>
+          </g>
+          <g fill="#fff" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" text-anchor="middle">
+            <text x="100" y="16">7</text>
+            <text x="100" y="40">8</text>
+            <text x="100" y="64">9</text>
+            <text x="100" y="192">7</text>
+            <text x="100" y="168">8</text>
+            <text x="100" y="144">9</text>
+          </g>
+          <ellipse cx="100" cy="100" rx="18" ry="22" fill="#ff3b4a" stroke="#fff" stroke-width="1.5"/>
+          <text x="100" y="105" fill="#fff" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" text-anchor="middle">X</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="wind-hud">
+      VĒJŠ <span id="wind-val">0</span>
+      <span class="wind-arrow" id="wind-arrow"></span>
+    </div>
+
+    <div class="range-floor"></div>
+    <div class="range-tape">DIST · 5M · NO STACIJAS</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="col">
+    <h6>PROSPEKTI</h6>
+    <p style="font-size:13px;color:var(--dim);line-height:1.6;max-width:32ch">Desmit cilvēku repa apvienība no Salaspils. Debijas albums "Biļete Uz Vienu Galu" iznāca 25.02.2025.</p>
+  </div>
+  <div class="col">
+    <h6>STACIJAS</h6>
+    <a href="#prospekti">01 · Prospekti</a>
+    <a href="#shop">02 · Shop</a>
+    <a href="#buvg">03 · BUVG</a>
+    <a href="#crew">04 · Crew</a>
+    <a href="#hq">05 · HQ</a>
+    <a href="#koncerti">06 · Koncerti</a>
+  </div>
+  <div class="col">
+    <h6>KANĀLI</h6>
+    <a href="https://open.spotify.com/artist/6YFWQsxKVixPU36qTJpTBl" target="_blank" rel="noopener">Spotify ↗</a>
+    <a href="https://www.youtube.com/@Prospekti" target="_blank" rel="noopener">YouTube ↗</a>
+    <a href="https://www.instagram.com/prospektihh/" target="_blank" rel="noopener">Instagram ↗</a>
+    <a href="https://prospekti.bigcartel.com/" target="_blank" rel="noopener">Shop ↗</a>
+    <a href="https://prospekti.lv" target="_blank" rel="noopener">prospekti.lv ↗</a>
+  </div>
+  <div class="col">
+    <h6>KONTAKTS</h6>
+    <a href="https://www.instagram.com/kjuumanis/" target="_blank" rel="noopener">Booking · @kjuumanis ↗</a>
+    <a href="https://www.instagram.com/prospektihh/" target="_blank" rel="noopener">Sadarbības · @prospektihh ↗</a>
+    <a href="https://prospekti.bigcartel.com/" target="_blank" rel="noopener">Shop · prospekti.bigcartel.com ↗</a>
+  </div>
+  <div class="big">PROSPEKTI</div>
+  <div class="foot-meta">
+    <span>© 2025 PROSPEKTI · SALASPILS · RĪGA</span>
+    <span>SITE · PROSPEKTI.LV</span>
+    <span>BIĻETE UZ VIENU GALU · 25.02.2025</span>
+  </div>
+</footer>
+
+<script>
+  // wagon click -> scroll to section + tooltip hover
+  const box = document.getElementById('trainBox');
+  const tt  = document.getElementById('tt');
+  const labels = {
+    prospekti:'01 · PROSPEKTI',
+    shop:'02 · SHOP',
+    buvg:'03 · BUVG',
+    crew:'04 · CREW',
+    hq:'05 · HQ',
+    koncerti:'06 · KONCERTI'
+  };
+  box.querySelectorAll('rect[data-target]').forEach(r=>{
+    r.addEventListener('click', ()=>{
+      const t = r.dataset.target;
+      const el = document.getElementById(t);
+      if(el) window.scrollTo({top: el.offsetTop - 20, behavior:'smooth'});
+    });
+    r.addEventListener('mousemove', e=>{
+      const rect = box.getBoundingClientRect();
+      tt.style.left = (e.clientX - rect.left) + 'px';
+      tt.style.top  = (e.clientY - rect.top) + 'px';
+      tt.textContent = '→ ' + labels[r.dataset.target];
+      tt.classList.add('show');
+    });
+    r.addEventListener('mouseleave', ()=>tt.classList.remove('show'));
+  });
+
+  // tracklist play indicator
+  document.querySelectorAll('.tracklist .track').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.tracklist .track').forEach(x=>x.classList.remove('playing'));
+      t.classList.add('playing');
+    });
+  });
+</script>
+<script src="game.js?v=4"></script>
+<script src="buvg-map.js?v=6"></script>
+</body>
+</html>
