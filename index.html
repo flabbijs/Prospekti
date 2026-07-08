@@ -4,6 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>PROSPEKTI — Biļete Uz Vienu Galu</title>
+<link rel="icon" type="image/png" href="assets/favicon.png"/>
+<link rel="apple-touch-icon" href="assets/favicon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Archivo+Black&display=swap" rel="stylesheet">
@@ -464,6 +466,9 @@
     font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;
   }
   .show .cta.past{background:transparent;border:1px solid var(--line);color:var(--dim);cursor:default}
+  .show.upcoming-empty .d-day{font-size:28px;color:var(--dim)}
+  .show.upcoming-empty{margin-bottom:60px}
+  .upcoming-note{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.25em;color:var(--ink);text-transform:uppercase;padding:18px 4px 0;margin-bottom:60px}
 
   /* AWARD HIGHLIGHT */
   .award{
@@ -1305,22 +1310,30 @@ fetch('https://api.bigcartel.com/prospekti/products.json')
     </div>
   </div>
 
-  <!-- ZELTA MIKROFONS AWARD HIGHLIGHT -->
-  <div class="award">
-    <div class="award-img award-photo">
-      <img src="assets/zelta-mikrofons-stage.jpg" alt="Prospekti saņem Zelta Mikrofonu — foto Nauris Veiss"/>
-      <div class="award-credit">FOTO · NAURIS VEISS</div>
-    </div>
-    <div class="award-copy">
-      <div class="award-tag">ZELTA MIKROFONS · 30</div>
-      <h3>LABĀKAIS HIPHOPA MŪZIKAS ALBUMS</h3>
-      <p>Debijas albums <b>"Biļete Uz Vienu Galu"</b> saņēma Zelta Mikrofonu 2026. gada ceremonijā. Latvijas mūzikas nozares atzinība — apliecinājums, ka Salaspils rep apvienība ir ierindojusies pašā žanra virsotnē.</p>
-      <p class="award-thanks">Paldies visiem, kas balsoja un klausījās. <b>MĒS TIKAI SĀKAM.</b></p>
-      <div class="award-links">
-        <a href="https://hiphops.lv/zelta-mikrofons-2026/" target="_blank" rel="noopener">HIPHOPS.LV ↗</a>
-      </div>
-    </div>
+  <!-- GAIDĀMIE KONCERTI -->
+  <h3 class="sub-h">GAIDĀMIE KONCERTI</h3>
+  <div class="shows-head">
+    <div>DATUMS</div>
+    <div>NOTIKUMS · VIETA</div>
+    <div>PILSĒTA</div>
+    <div>STATUSS</div>
+    <div></div>
   </div>
+  <div class="show">
+    <div><div class="d-day">21</div><div class="d-mo">AUG '26</div></div>
+    <div><div class="city">TBA</div><div class="venue">Vieta tiks paziņota · seko @prospektihh</div></div>
+    <div class="country">Rīga</div>
+    <div class="status">Drīzumā</div>
+    <a class="cta" href="https://www.instagram.com/prospektihh/" target="_blank" rel="noopener">SEKO IG ↗</a>
+  </div>
+  <div class="show">
+    <div><div class="d-day">29</div><div class="d-mo">AUG '26</div></div>
+    <div><div class="city">TBA</div><div class="venue">Vieta tiks paziņota · seko @prospektihh</div></div>
+    <div class="country">Rīga</div>
+    <div class="status">Drīzumā</div>
+    <a class="cta" href="https://www.instagram.com/prospektihh/" target="_blank" rel="noopener">SEKO IG ↗</a>
+  </div>
+  <p class="upcoming-note">IESPĒJAMS VIENĪGIE KONCERTI ŠOVASAR — NENOKAVĒ.</p>
 
   <!-- SHOWS ARCHIVE -->
   <h3 class="sub-h">KONCERTU ARHĪVS</h3>
@@ -1419,6 +1432,24 @@ fetch('https://api.bigcartel.com/prospekti/products.json')
 
   <!-- PRESS / MEDIA -->
   <h3 class="sub-h press-h">PRESE · MEDIJI · PODKĀSTI</h3>
+
+  <!-- ZELTA MIKROFONS AWARD HIGHLIGHT -->
+  <div class="award">
+    <div class="award-img award-photo">
+      <img src="assets/zelta-mikrofons-stage.jpg" alt="Prospekti saņem Zelta Mikrofonu — foto Nauris Veiss"/>
+      <div class="award-credit">FOTO · NAURIS VEISS</div>
+    </div>
+    <div class="award-copy">
+      <div class="award-tag">ZELTA MIKROFONS · 30</div>
+      <h3>LABĀKAIS HIPHOPA MŪZIKAS ALBUMS</h3>
+      <p>Debijas albums <b>"Biļete Uz Vienu Galu"</b> saņēma Zelta Mikrofonu 2026. gada ceremonijā. Latvijas mūzikas nozares atzinība — apliecinājums, ka Salaspils rep apvienība ir ierindojusies pašā žanra virsotnē.</p>
+      <p class="award-thanks">Paldies visiem, kas balsoja un klausījās. <b>MĒS TIKAI SĀKAM.</b></p>
+      <div class="award-links">
+        <a href="https://hiphops.lv/zelta-mikrofons-2026/" target="_blank" rel="noopener">HIPHOPS.LV ↗</a>
+      </div>
+    </div>
+  </div>
+
   <div class="press-grid">
     <a class="press" href="https://hiphops.lv/zelta-mikrofons-2026/" target="_blank" rel="noopener">
       <div class="press-src">HIPHOPS.LV</div>
