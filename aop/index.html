@@ -83,6 +83,64 @@
       50% { transform: translateX(8%) translateY(-12px); }
       100% { transform: translateX(-8%) translateY(0); }
     }
+    @keyframes blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      93%, 96% { transform: scaleY(0.05); }
+    }
+    @keyframes eyeGlow {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 0.95; }
+    }
+    @keyframes whisper {
+      0%, 100% { opacity: 0; transform: translateY(6px); }
+      12%, 55% { opacity: 0.5; transform: translateY(0); }
+      70% { opacity: 0; transform: translateY(-10px); }
+    }
+    @keyframes chop {
+      0%, 55%, 100% { transform: rotate(-30deg); }
+      65% { transform: rotate(38deg); }
+      70% { transform: rotate(32deg); }
+      78% { transform: rotate(-30deg); }
+    }
+    @keyframes sawShake {
+      0% { transform: translate(0,0) rotate(-6deg); }
+      25% { transform: translate(-2px,1px) rotate(-6.6deg); }
+      50% { transform: translate(2px,-1px) rotate(-5.4deg); }
+      75% { transform: translate(-1px,-2px) rotate(-6.3deg); }
+      100% { transform: translate(0,0) rotate(-6deg); }
+    }
+    @keyframes chainRun {
+      0% { background-position: 0 0; }
+      100% { background-position: 24px 0; }
+    }
+    @keyframes stab {
+      0%, 60%, 100% { transform: rotate(40deg) translateY(0); }
+      70% { transform: rotate(40deg) translateY(26px); }
+      76% { transform: rotate(40deg) translateY(22px); }
+      86% { transform: rotate(40deg) translateY(0); }
+    }
+    @keyframes gleam {
+      0%, 100% { opacity: 0; transform: translateY(-70px); }
+      45% { opacity: 0; }
+      55% { opacity: 0.9; }
+      65% { opacity: 0; transform: translateY(70px); }
+    }
+    @keyframes recoil {
+      0%, 78%, 100% { transform: rotate(-4deg) translateX(0); }
+      80% { transform: rotate(-14deg) translateX(9px); }
+      86% { transform: rotate(-7deg) translateX(4px); }
+      92% { transform: rotate(-4deg) translateX(0); }
+    }
+    @keyframes muzzle {
+      0%, 78%, 84%, 100% { opacity: 0; transform: scale(0.3); }
+      80% { opacity: 1; transform: scale(1.15); }
+      82% { opacity: 0.6; transform: scale(0.9); }
+    }
+    @keyframes splatPop {
+      0%, 60%, 100% { opacity: 0; transform: scale(0.3); }
+      68% { opacity: 0.9; transform: scale(1.1); }
+      90% { opacity: 0.7; transform: scale(1); }
+    }
   </style>
 </helmet>
 
@@ -92,6 +150,13 @@
   <sc-for list="{{ splats }}" as="s" hint-placeholder-count="0">
     <div style="position: absolute; left: {{ s.x }}px; top: {{ s.y }}px; width: {{ s.size }}px; height: {{ s.size }}px; margin-left: -40px; margin-top: -40px; pointer-events: none; z-index: 90; border-radius: 50%; background: radial-gradient(circle at 45% 45%, {{ bloodColor }} 0%, {{ bloodColor }} 28%, transparent 30%), radial-gradient(circle at 70% 30%, {{ bloodColor }} 0%, {{ bloodColor }} 8%, transparent 10%), radial-gradient(circle at 25% 65%, {{ bloodColor }} 0%, {{ bloodColor }} 10%, transparent 12%), radial-gradient(circle at 60% 75%, {{ bloodColor }} 0%, {{ bloodColor }} 6%, transparent 8%); animation: splatIn 0.25s ease-out; opacity: 0.85;"></div>
   </sc-for>
+
+  <!-- subliminal flash message -->
+  <sc-if value="{{ flashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; z-index: 95; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.92); pointer-events: none;">
+      <div style="font-family: 'Nosifer', cursive; font-size: clamp(30px, 5vw, 64px); color: #ff2b2b; text-shadow: 0 0 40px rgba(255,43,43,0.8); text-align: center; padding: 0 20px;">{{ flashMsg }}</div>
+    </div>
+  </sc-if>
 
   <!-- flickering darkness overlay -->
   <sc-if value="{{ flicker }}" hint-placeholder-val="{{ true }}">
@@ -154,6 +219,20 @@
           <div style="width: 4px; height: 50px; margin: -4px auto 0; border-radius: 0 0 4px 4px; background: linear-gradient({{ bloodColor }}, transparent); animation: drip 5s 1s ease-in infinite;"></div>
         </div>
 
+        <!-- watching eyes in the dark -->
+        <div style="position: absolute; bottom: 14%; left: 6%; display: flex; gap: 14px; animation: eyeGlow 5s ease-in-out infinite;">
+          <div style="width: 16px; height: 9px; border-radius: 50%; background: radial-gradient(circle, #ff3b3b 0%, #7a0e12 60%, transparent 80%); animation: blink 6s infinite;"></div>
+          <div style="width: 16px; height: 9px; border-radius: 50%; background: radial-gradient(circle, #ff3b3b 0%, #7a0e12 60%, transparent 80%); animation: blink 6s infinite;"></div>
+        </div>
+        <div style="position: absolute; top: 32%; right: 4%; display: flex; gap: 10px; animation: eyeGlow 7s 1.5s ease-in-out infinite;">
+          <div style="width: 12px; height: 7px; border-radius: 50%; background: radial-gradient(circle, #ff3b3b 0%, #7a0e12 60%, transparent 80%); animation: blink 9s 2s infinite;"></div>
+          <div style="width: 12px; height: 7px; border-radius: 50%; background: radial-gradient(circle, #ff3b3b 0%, #7a0e12 60%, transparent 80%); animation: blink 9s 2s infinite;"></div>
+        </div>
+        <!-- whispers drifting in the dark -->
+        <div style="position: absolute; top: 18%; left: 8%; font-size: 13px; letter-spacing: 5px; color: #6e5f58; animation: whisper 9s 2s infinite; pointer-events: none;">kāds tevi vēro…</div>
+        <div style="position: absolute; bottom: 24%; right: 7%; font-size: 13px; letter-spacing: 5px; color: #6e5f58; animation: whisper 11s 6s infinite; pointer-events: none;">neatskaties…</div>
+        <div style="position: absolute; top: 55%; left: 3%; font-size: 12px; letter-spacing: 4px; color: #55463f; animation: whisper 13s 10s infinite; pointer-events: none; writing-mode: vertical-rl;">tu jau esi sarakstā</div>
+
         <div style="font-size: 15px; letter-spacing: 8px; color: #6e5f58; text-transform: uppercase;">Tu tiki ielaists</div>
         <div style="position: relative; display: inline-block;">
           <!-- fog behind title -->
@@ -195,20 +274,82 @@
           <div style="font-size: 14px; letter-spacing: 3px; color: #6e5f58;">instrumenti, kas gaida savu stundu</div>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; width: min(1100px, 94vw);">
+          <!-- CIRVIS: chopping axe -->
           <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div style="height: 200px; border: 1px solid #3a1212;"><image-slot id="axe" shape="rect" placeholder="cirvis — nomet foto"></image-slot></div>
+            <div style="height: 200px; border: 1px solid #3a1212; position: relative; overflow: hidden; background: radial-gradient(ellipse at 50% 100%, #170a08 0%, #0b0505 70%);">
+              <!-- chopping block -->
+              <div style="position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); width: 110px; height: 34px; background: linear-gradient(#3a2a1e, #221710); border-radius: 4px;"></div>
+              <div style="position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); width: 110px; height: 8px; background: #4a382a; border-radius: 4px 4px 0 0;"></div>
+              <!-- blood splat on block -->
+              <div style="position: absolute; bottom: 52px; left: 50%; width: 60px; height: 16px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(ellipse, {{ bloodColor }} 0%, rgba(95,10,14,0.4) 60%, transparent 80%); animation: splatPop 3.2s infinite;"></div>
+              <!-- axe: pivots at handle end -->
+              <div style="position: absolute; bottom: 58px; left: 50%; width: 8px; height: 110px; transform-origin: bottom center; animation: chop 3.2s ease-in infinite;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(90deg, #4a382e, #2a201b); border-radius: 4px;"></div>
+                <div style="position: absolute; top: -14px; left: -34px; width: 64px; height: 44px; background: linear-gradient(160deg, #6a656a, #24212a); clip-path: polygon(0 22%, 60% 0, 60% 100%, 0 78%, 20% 50%);"></div>
+                <div style="position: absolute; top: 30px; left: -30px; width: 4px; height: 26px; border-radius: 0 0 4px 4px; background: linear-gradient({{ bloodColor }}, transparent);"></div>
+              </div>
+            </div>
             <div style="font-size: 15px; letter-spacing: 3px; color: #a89a90; text-align: center;">CIRVIS</div>
           </div>
+          <!-- MOTORZĀĢIS: rattling chainsaw with running chain -->
           <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div style="height: 200px; border: 1px solid #3a1212;"><image-slot id="chainsaw" shape="rect" placeholder="motorzāģis — nomet foto"></image-slot></div>
+            <div style="height: 200px; border: 1px solid #3a1212; position: relative; overflow: hidden; background: radial-gradient(ellipse at 50% 100%, #170a08 0%, #0b0505 70%);">
+              <div style="position: absolute; top: 50%; left: 50%; margin: -34px 0 0 -95px; width: 190px; height: 68px; animation: sawShake 0.12s linear infinite;">
+                <!-- body -->
+                <div style="position: absolute; left: 0; top: 8px; width: 74px; height: 52px; background: linear-gradient(#7a1216, #3d0a0d); border-radius: 10px 6px 6px 10px;"></div>
+                <!-- handle -->
+                <div style="position: absolute; left: 6px; top: -8px; width: 46px; height: 14px; background: #1d1a1d; border-radius: 8px;"></div>
+                <!-- guide bar -->
+                <div style="position: absolute; left: 70px; top: 22px; width: 116px; height: 26px; background: linear-gradient(#55505a, #2a272e); border-radius: 0 14px 14px 0;"></div>
+                <!-- running chain -->
+                <div style="position: absolute; left: 70px; top: 18px; width: 118px; height: 34px; border-radius: 0 17px 17px 0; border: 4px dashed #8a858f; box-sizing: border-box; background: repeating-linear-gradient(90deg, transparent 0 12px, rgba(200,200,210,0.15) 12px 24px); animation: chainRun 0.15s linear infinite;"></div>
+                <!-- blood flecks off the tip -->
+                <div style="position: absolute; left: 182px; top: 10px; width: 8px; height: 8px; border-radius: 50%; background: {{ bloodColor }}; animation: splatPop 0.9s infinite;"></div>
+                <div style="position: absolute; left: 172px; top: 52px; width: 6px; height: 6px; border-radius: 50%; background: {{ bloodColor }}; animation: splatPop 1.3s 0.4s infinite;"></div>
+              </div>
+              <!-- blood pool -->
+              <div style="position: absolute; bottom: 18px; left: 50%; width: 120px; height: 14px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(ellipse, rgba(95,10,14,0.7) 0%, transparent 75%); filter: blur(2px);"></div>
+            </div>
             <div style="font-size: 15px; letter-spacing: 3px; color: #a89a90; text-align: center;">MOTORZĀĢIS</div>
           </div>
+          <!-- NAZIS: stabbing knife with gleam -->
           <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div style="height: 200px; border: 1px solid #3a1212;"><image-slot id="knife" shape="rect" placeholder="nazis — nomet foto"></image-slot></div>
+            <div style="height: 200px; border: 1px solid #3a1212; position: relative; overflow: hidden; background: radial-gradient(ellipse at 50% 100%, #170a08 0%, #0b0505 70%);">
+              <div style="position: absolute; top: 18px; left: 50%; margin-left: -14px; animation: stab 3.6s ease-in-out infinite;">
+                <!-- handle -->
+                <div style="width: 20px; height: 46px; background: linear-gradient(#2e2119, #1a120d); border-radius: 6px; margin: 0 auto; box-shadow: inset 0 0 0 2px rgba(90,60,40,0.3);"></div>
+                <!-- guard -->
+                <div style="width: 36px; height: 7px; background: #55505a; border-radius: 3px; margin: 0 auto;"></div>
+                <!-- blade with moving gleam -->
+                <div style="position: relative; width: 22px; height: 108px; margin: 0 auto; background: linear-gradient(100deg, #9a95a0 0%, #55505a 55%, #2a272e 100%); clip-path: polygon(0 0, 100% 0, 100% 60%, 50% 100%, 0 60%); overflow: hidden;">
+                  <div style="position: absolute; left: 0; width: 100%; height: 26px; background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.75), rgba(255,255,255,0)); animation: gleam 3.6s infinite;"></div>
+                </div>
+                <!-- blood on the tip -->
+                <div style="width: 5px; height: 30px; margin: -8px auto 0; border-radius: 0 0 4px 4px; background: linear-gradient({{ bloodColor }}, transparent);"></div>
+              </div>
+              <!-- impact splat -->
+              <div style="position: absolute; bottom: 26px; left: 50%; width: 70px; height: 16px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(ellipse, {{ bloodColor }} 0%, rgba(95,10,14,0.35) 55%, transparent 80%); animation: splatPop 3.6s 0.3s infinite;"></div>
+            </div>
             <div style="font-size: 15px; letter-spacing: 3px; color: #a89a90; text-align: center;">NAZIS</div>
           </div>
+          <!-- PISTOLE: recoiling pistol with muzzle flash -->
           <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div style="height: 200px; border: 1px solid #3a1212;"><image-slot id="pistol" shape="rect" placeholder="pistole — nomet foto"></image-slot></div>
+            <div style="height: 200px; border: 1px solid #3a1212; position: relative; overflow: hidden; background: radial-gradient(ellipse at 50% 100%, #170a08 0%, #0b0505 70%);">
+              <div style="position: absolute; top: 50%; left: 50%; margin: -30px 0 0 -60px; width: 130px; height: 80px; animation: recoil 2.8s ease-out infinite; transform-origin: 80% 80%;">
+                <!-- slide/barrel -->
+                <div style="position: absolute; left: 0; top: 0; width: 118px; height: 26px; background: linear-gradient(#4a4550, #23202a); border-radius: 4px 8px 3px 3px;"></div>
+                <!-- muzzle opening -->
+                <div style="position: absolute; left: -2px; top: 8px; width: 6px; height: 10px; background: #0a0a0c; border-radius: 2px;"></div>
+                <!-- trigger guard -->
+                <div style="position: absolute; left: 62px; top: 26px; width: 30px; height: 22px; border: 5px solid #23202a; border-top: none; border-radius: 0 0 14px 14px; box-sizing: border-box;"></div>
+                <!-- grip -->
+                <div style="position: absolute; left: 92px; top: 24px; width: 24px; height: 52px; background: linear-gradient(100deg, #33202a, #1a1016); border-radius: 3px 3px 8px 6px; transform: skewX(-12deg);"></div>
+                <!-- muzzle flash -->
+                <div style="position: absolute; left: -46px; top: -6px; width: 46px; height: 38px; background: radial-gradient(circle at 90% 50%, #ffd76a 0%, #ff7a2b 35%, rgba(255,60,20,0.5) 60%, transparent 75%); clip-path: polygon(100% 40%, 55% 25%, 65% 0, 30% 30%, 0 50%, 30% 70%, 65% 100%, 55% 75%, 100% 60%); animation: muzzle 2.8s ease-out infinite;"></div>
+                <!-- ejected casing -->
+                <div style="position: absolute; left: 58px; top: -16px; width: 10px; height: 5px; background: #b08a3a; border-radius: 2px; animation: muzzle 2.8s 0.05s ease-out infinite;"></div>
+              </div>
+            </div>
             <div style="font-size: 15px; letter-spacing: 3px; color: #a89a90; text-align: center;">PISTOLE</div>
           </div>
         </div>
@@ -243,8 +384,15 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this._t = setInterval(() => this.setState({ now: Date.now() }), 1000);
+    this._msgs = ['MĒS TEVI REDZAM', 'NEATSKATIES', 'TU ESI NĀKAMAIS', 'DIVAS DIENAS', 'MĒRĶIS IR ZINĀMS'];
+    this._mi = 0;
+    this._flash = setInterval(() => {
+      if (!(this.props.skipGate ?? false) && !this.state.unlocked) return;
+      this.setState({ flashOn: true, flashMsg: this._msgs[this._mi++ % this._msgs.length] });
+      setTimeout(() => this.setState({ flashOn: false }), 200);
+    }, 17000);
   }
-  componentWillUnmount() { clearInterval(this._t); }
+  componentWillUnmount() { clearInterval(this._t); clearInterval(this._flash); }
 
   renderVals() {
     const skipGate = this.props.skipGate ?? false;
@@ -260,6 +408,8 @@ class Component extends DCLogic {
       locked: !unlocked,
       unlocked: unlocked,
       wrong: this.state.wrong,
+      flashOn: this.state.flashOn ?? false,
+      flashMsg: this.state.flashMsg ?? '',
       pw: this.state.pw,
       splats: this.state.splats,
       countdown: pad(h) + ':' + pad(m) + ':' + pad(s),
